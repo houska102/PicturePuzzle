@@ -178,7 +178,20 @@ class SlidingPuzzle {
                 cell.style.backgroundPosition = `${this.getOffset(col)} ${this.getOffset(row)}`;
                 cell.style.gridColumn = col + 1;
                 cell.style.gridRow = row + 1;
-								cell.textContent = row * this.size + col + 1;
+								console.log(this.size);
+								
+								if(this.size > 10) {
+									cell.style.fontSize = '18px';
+								} else if(this.size > 15) {
+									cell.style.fontSize = '14px';
+								} else if(this.size > 20) {
+									cell.style.fontSize = '12px';
+								} else if(this.size > 25) {
+									cell.style.fontSize = '10px';
+								}
+								if(this.size < 30) {
+									cell.textContent = row * this.size + col + 1;
+								}
 
                 // Make the last cell empty
                 if (row === this.emptyCell.row && col === this.emptyCell.col) {
