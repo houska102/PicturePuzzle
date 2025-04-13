@@ -357,19 +357,19 @@ class SlidingPuzzle {
             switch (e.key) {
                 case 'ArrowUp':
                 case 'w': 
-                    targetRow += 1; // Move cell below empty space up
+                    targetRow -= 1; 
                     break;
                 case 'ArrowDown':
                 case 's':
-                    targetRow -= 1; // Move cell above empty space down
+                    targetRow += 1; 
                     break;
                 case 'ArrowLeft':
                 case 'a':
-                    targetCol += 1; // Move cell to right of empty space left
+                    targetCol -= 1; 
                     break;
                 case 'ArrowRight':
                 case 'd':
-                    targetCol -= 1; // Move cell to left of empty space right
+                    targetCol += 1;
                     break;
                 default:
                     return;
