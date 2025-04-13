@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sliding Puzzle</title>
+    <style>
+        .game-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .game-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .leaderboard {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            min-width: 250px;
+            max-width: 300px;
+        }
+
+        .leaderboard h2 {
+            margin-top: 0;
+            color: #333;
+            text-align: center;
+        }
+
+        .leaderboard-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .leaderboard-item {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+						gap: 8px;
+            align-items: center;
+        }
+
+        .leaderboard-item:last-child {
+            border-bottom: none;
+        }
+
+        .leaderboard-rank {
+            font-weight: bold;
+            color: #4a90e2;
+        }
+
+        .leaderboard-time {
+            color: #666;
+        }
+
+        .leaderboard-name {
+            color: #333;
+            font-weight: 500;
+            flex: 1;
+            text-align: center;
+            margin: 0 10px;
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .leaderboard {
+                margin-top: 20px;
+                width: 100%;
+                max-width: 600px;
+            }
+        }
+
+        .grid-container {
+            position: relative;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            width: 100%;
+            height: 100%;
+            max-width: 600px;
+            max-height: 600px;
+            aspect-ratio: 1;
+            margin: 0 auto;
+        }
+
+        .cell {
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-image: url('./images/puzzle-image-2.png');
+            border: 1px solid #ccc;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cell:hover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 5px;
+            background-color: #357abd20;
+        }
+
+        .empty {
+            background: white;
+            cursor: default;
+        }
+
+        .correct {
+          border: 1px solid #47fa50;
+        }
+
+        .correct:not(.empty)::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 5px;
+            background-color: #a9bd353a;
+        }
+
+        .settings {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #357abd;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #2868a3;
+        }
+
+        select {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .victory-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .victory-screen h2 {
+            color: #bd3535;
+            margin-bottom: 1rem;
+        }
+
+				.victory-content {
+					background-color: #0f0f0f8f;
+					color: white;
+					min-width: 250px;
+					padding: 20px;
+					border-radius: 10px;
+				}
+
+        .hidden {
+            display: none;
+        }
+
+        .slide-right {
+            animation: slideRight 0.1s forwards ease-in ;
+        }
+        .slide-left {
+            animation: slideLeft 0.1s forwards ease-in ;
+        }
+        .slide-up {
+            animation: slideUp 0.1s forwards ease-in ;
+        }
+        .slide-down {
+            animation: slideDown 0.1s forwards ease-in ;
+        }
+
+  @keyframes slideRight {
+    0%{
+        transform: translateX(100%);
+    }
+    100%{
+        transform: translateX(0);
+    }
+  }
+  @keyframes slideLeft {
+    0%{
+        transform: translateX(-100%);
+    }
+    100%{
+        transform: translateX(0);
+    }
+  }
+  @keyframes slideUp {
+    0%{
+        transform: translateY(-100%);
+    }
+    100%{
+        transform: translateY(0);
+    }
+  }
+  @keyframes slideDown {
+    0%{
+        transform: translateY(100%);
+    }
+    100%{
+        transform: translateY(0);
+    }
+  }
+
+        .username-input {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            width: 150px;
+        }
+        
+        .username-label {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-section">
+            <div class="settings">
+              <div style="position: relative; display: inline-block; border: 1px solid #ccc; border-radius: 4px; padding: 8px; cursor: pointer; background-color: #fafafa;">
+                <input type="file" id="imageInput" accept="image/*" class="file-input" style="cursor: pointer; visibility: hidden; width: 100%; height: 100%; position: absolute; top: 0; left: 0;">
+                <label for="imageInput" id="imageInputLabel" style="cursor: pointer;">Upload Image</label>
+              </div>
+              <select id="imageSelect">
+                  <option value="puzzle-image.png">Monkey</option>
+                  <option value="puzzle-image-2.png">Old Person</option>
+                  <option value="puzzle-image-3.png">Tomas</option>
+                  <option value="puzzle-image-4.jpg">BoardWalk</option>
+              </select>
+                <select id="gridSize">
+                    <option value="3">3x3</option>
+                    <option value="4">4x4</option>
+                    <option value="5">5x5</option>
+                    <option value="6">6x6</option>
+                    <option value="7">7x7</option>
+                    <option value="8">8x8</option>
+                </select>
+                <button id="newGame">New Game</button>
+                <button id="autoSolve">Auto Solve</button>
+            </div>
+            <div class="grid-container">
+              <div id="victoryScreen" class="victory-screen hidden">
+                <div class="victory-content">
+                    <h2>Congratulations!</h2>
+                    <p>You solved the puzzle!</p>
+										<div class="username-container">
+											<input type="text" id="username" class="username-input" placeholder="Enter your Username" maxlength="15">
+										</div>
+                    <p>Time: <span id="finalTime">00:00</span></p>
+                    <button id="playAgain">Play Again</button> <button id="saveTimeButton" class="hidden">Save Time</button>
+                </div>
+              </div>
+              <div class="grid" id="grid"></div>
+            </div>
+            <div class="timer">Time: <span>00:00</span></div>
+        </div>
+        <div class="leaderboard">
+            <h2>Top Times</h2>
+            <ul class="leaderboard-list" id="leaderboardList"></ul>
+        </div>
+    </div>
+    
+    <script src="game.js"></script>
+</body>
+</html> 
