@@ -28,7 +28,7 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             min-width: 250px;
-            max-width: 300px;
+            max-width: 450px;
         }
 
         .leaderboard h2 {
@@ -108,7 +108,7 @@
             box-sizing: border-box;
             justify-content: center;
             align-items: center;
-            font-size: 24px;
+            font-size: 28px;
             color: white;
             cursor: pointer;
             transition: all 0.3s;
@@ -116,6 +116,10 @@
             border: 1px solid #ccc;
             position: relative;
             overflow: hidden;
+						display: flex;
+						justify-content: center;
+						align-items: center;
+						font-family: 'Poppins', sans-serif;
         }
 
         .cell:hover::before {
@@ -301,7 +305,7 @@
 										<div class="username-container">
 											<input type="text" id="username" class="username-input" placeholder="Enter your Username" maxlength="15">
 										</div>
-                    <p>Time: <span id="finalTime">00:00</span></p>
+                    <p>Time: <span id="finalTime">00:00</span> and <span id="steps">Steps: 0</span></p>
                     <button id="playAgain">Play Again</button> <button id="saveTimeButton" class="hidden">Save Time</button>
                 </div>
               </div>

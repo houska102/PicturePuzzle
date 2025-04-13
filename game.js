@@ -40,13 +40,14 @@ class SlidingPuzzle {
         // Initialize with selected size
         this.size = parseInt(this.gridSizeSelect.value);
         this.cells = [];
-        this.emptyCell = { row: 0, col: 0 };
+        this.emptyCell = { row: this.size - 1, col: this.size - 1 };
         this.imageOffset = 100 / (this.size - 1);
         this.imageName = this.imageSelect.value;
         this.timer = null
         this.startTime = null
         this.endTime = null
 				this.newMatch = true;
+				this.steps = 0;
 
         // Add settings event listeners
         this.newGameButton.addEventListener('click', () => this.startNewGame());
@@ -133,8 +134,9 @@ class SlidingPuzzle {
         this.hideVictoryScreen();
         this.size = parseInt(this.gridSizeSelect.value);
         this.imageOffset = 100 / (this.size - 1);
-        this.emptyCell = { row: 0, col: 0 };
+        this.emptyCell = { row: this.size - 1, col: this.size - 1 }
         this.initializeGame();
+				this.steps = 0;
 				this.newMatch = true;
 				this.saveTimeButton.classList.remove('hidden');
         this.startTimer();
@@ -176,6 +178,7 @@ class SlidingPuzzle {
                 cell.style.backgroundPosition = `${this.getOffset(col)} ${this.getOffset(row)}`;
                 cell.style.gridColumn = col + 1;
                 cell.style.gridRow = row + 1;
+								cell.textContent = row * this.size + col + 1;
 
                 // Make the last cell empty
                 if (row === this.emptyCell.row && col === this.emptyCell.col) {
@@ -278,12 +281,14 @@ class SlidingPuzzle {
         // Update empty cell position
         this.emptyCell.row = row;
         this.emptyCell.col = col;
+				this.steps += 1;
     }
 
     showVictoryScreen() {
         this.victoryScreen.classList.remove('hidden');
         const finalTime = this.endTime - this.startTime;
         this.finalTimeElement.textContent = this.formatTime(finalTime);
+				document.getElementById('steps').textContent = `Steps: ${this.steps}`;
     }
 
     hideVictoryScreen() {
@@ -381,6 +386,7 @@ class SlidingPuzzle {
                 <span class="leaderboard-rank">#${index + 1}</span>
                 <span class="leaderboard-name">${entry.username || 'Anonymous'}</span>
                 <span class="leaderboard-size">${entry.size}x${entry.size}</span>
+                <span class="leaderboard-steps">${entry.steps || '-'}</span>
                 <span class="leaderboard-time">${this.formatTime(entry.time)}</span>
             `;
             this.leaderboardList.appendChild(li);
@@ -397,6 +403,7 @@ class SlidingPuzzle {
         leaderboard.push({ 
             time, 
             size: this.size,
+            steps: this.steps,
             username: username
         });
         localStorage.setItem('puzzleLeaderboard', JSON.stringify(
