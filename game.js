@@ -128,6 +128,7 @@ class SlidingPuzzle {
         this.setGridSize();
         this.initializeGrid();
         this.scrambleGrid();
+				this.grid.append(...this.cells);
     }
 
     startNewGame() {
@@ -178,19 +179,18 @@ class SlidingPuzzle {
                 cell.style.backgroundPosition = `${this.getOffset(col)} ${this.getOffset(row)}`;
                 cell.style.gridColumn = col + 1;
                 cell.style.gridRow = row + 1;
-								console.log(this.size);
-								
-								if(this.size > 10) {
-									cell.style.fontSize = '18px';
-								} else if(this.size > 15) {
-									cell.style.fontSize = '14px';
-								} else if(this.size > 20) {
-									cell.style.fontSize = '12px';
-								} else if(this.size > 25) {
-									cell.style.fontSize = '10px';
-								}
 								if(this.size < 30) {
 									cell.textContent = row * this.size + col + 1;
+
+									if(this.size > 25) {
+										cell.style.fontSize = '10px';
+									} else if(this.size > 20) {
+										cell.style.fontSize = '12px';
+									} else if(this.size > 15) {
+										cell.style.fontSize = '14px';
+									} else if(this.size > 10) {
+										cell.style.fontSize = '18px';
+									}
 								}
 
                 // Make the last cell empty
@@ -201,7 +201,6 @@ class SlidingPuzzle {
                   cell.addEventListener('click', () => this.handleClick(cell));
                 }
 
-                this.grid.appendChild(cell);
                 this.cells.push(cell);
             }
         }
@@ -209,14 +208,13 @@ class SlidingPuzzle {
 
     scrambleGrid() {
         const numberOfMoves = this.size * 100;
+				const directions = [
+					{row: -1, col: 0}, // up
+					{row: 1, col: 0},  // down
+					{row: 0, col: -1}, // left
+					{row: 0, col: 1}   // right
+			];
         Array(numberOfMoves).fill(0).forEach(() => {
-            const directions = [
-                {row: -1, col: 0}, // up
-                {row: 1, col: 0},  // down
-                {row: 0, col: -1}, // left
-                {row: 0, col: 1}   // right
-            ];
-            
             const possibleMoves = directions.reduce((acc, dir) => {
               const newRow = this.emptyCell.row + dir.row;
               const newCol = this.emptyCell.col + dir.col;
@@ -261,10 +259,7 @@ class SlidingPuzzle {
             (cell) => cell.dataset.row === row.toString() && 
                    cell.dataset.col === col.toString()
         );
-        const emptyCell = this.cells.find(
-            (cell) => cell.dataset.row === this.emptyCell.row.toString() && 
-                   cell.dataset.col === this.emptyCell.col.toString()
-        );
+        const emptyCell = this.cells[this.cells.length - 1];
 
         // Swap content and classes
         clickedCell.style.gridColumn = this.emptyCell.col + 1;
@@ -324,11 +319,8 @@ class SlidingPuzzle {
             return currentPos === cell.dataset.correctPosition;
         });
 
-        const emptyCell = this.cells.find(
-            cell => cell.classList.contains('empty')
-        );
-
         if (isSolved) {
+						const emptyCell = this.cells[this.cells.length - 1];
             emptyCell.classList.remove('empty');
             emptyCell.style.backgroundImage = `url('${this.imageName}')`;
             this.cells.map(cell => {
@@ -336,8 +328,6 @@ class SlidingPuzzle {
             });
             this.stopTimer();
             this.showVictoryScreen();
-        } else {
-            emptyCell.classList.add('empty');
         }
     }
 
